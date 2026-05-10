@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bharat Signal</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#0b0b0b;
+      --paper:#f5f0e8;
+      --muted:#9f9f9f;
+      --line:#1f1f1f;
+      --red:#d32f2f;
+      --card:#111111;
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      background:var(--bg);
+      color:var(--paper);
+      font-family:'IBM Plex Sans',sans-serif;
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .topbar{
+      width:100%;
+      padding:22px 8%;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:fixed;
+      top:0;
+      background:rgba(11,11,11,0.9);
+      backdrop-filter:blur(10px);
+      z-index:100;
+    }
+
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+
+    .dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      background:var(--red);
+      box-shadow:0 0 12px rgba(211,47,47,0.7);
+    }
+
+    .logo span{
+      font-family:'IBM Plex Mono',monospace;
+      letter-spacing:0.22em;
+      text-transform:uppercase;
+      font-size:13px;
+    }
+
+    nav{
+      display:flex;
+      gap:28px;
+    }
+
+    nav a{
+      text-decoration:none;
+      color:var(--muted);
+      font-size:14px;
+      transition:0.3s;
+    }
+
+    nav a:hover{
+      color:white;
+    }
+
+    .hero{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      padding:140px 8% 80px;
+      position:relative;
+    }
+
+    .hero::before{
+      content:'';
+      position:absolute;
+      width:500px;
+      height:500px;
+      right:-120px;
+      top:50%;
+      transform:translateY(-50%);
+      background:radial-gradient(circle, rgba(211,47,47,0.15), transparent 70%);
+      border-radius:50%;
+    }
+
+    .eyebrow{
+      color:var(--red);
+      font-family:'IBM Plex Mono',monospace;
+      letter-spacing:0.28em;
+      text-transform:uppercase;
+      font-size:12px;
+      margin-bottom:26px;
+    }
+
+    h1{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(56px,9vw,120px);
+      line-height:0.95;
+      max-width:900px;
+      margin-bottom:30px;
+    }
+
+    h1 span{
+      color:var(--red);
+      font-style:italic;
+    }
+
+    .hero p{
+      max-width:760px;
+      color:#c8c8c8;
+      line-height:1.9;
+      font-size:20px;
+      margin-bottom:42px;
+      font-weight:300;
+    }
+
+    .buttons{
+      display:flex;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      padding:16px 28px;
+      border:1px solid var(--red);
+      color:white;
+      text-decoration:none;
+      text-transform:uppercase;
+      letter-spacing:0.08em;
+      font-size:13px;
+      transition:0.3s;
+    }
+
+    .btn:hover{
+      background:var(--red);
+      transform:translateY(-2px);
+    }
+
+    .btn.secondary{
+      border-color:#333;
+      color:#bdbdbd;
+    }
+
+    .btn.secondary:hover{
+      background:#161616;
+    }
+
+    section{
+      padding:100px 8%;
+      border-top:1px solid var(--line);
+    }
+
+    .section-kicker{
+      color:var(--red);
+      font-family:'IBM Plex Mono',monospace;
+      letter-spacing:0.25em;
+      text-transform:uppercase;
+      font-size:11px;
+      margin-bottom:18px;
+    }
+
+    .section-title{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(36px,5vw,58px);
+      line-height:1.1;
+      margin-bottom:24px;
+      max-width:800px;
+    }
+
+    .section-desc{
+      color:#bdbdbd;
+      line-height:1.9;
+      max-width:760px;
+      font-size:18px;
+    }
+
+    .grid{
+      margin-top:60px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+      gap:24px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      padding:34px;
+      transition:0.3s;
+    }
+
+    .card:hover{
+      transform:translateY(-6px);
+      border-color:#2c2c2c;
+    }
+
+    .card-tag{
+      color:var(--red);
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:0.2em;
+      margin-bottom:18px;
+      font-family:'IBM Plex Mono',monospace;
+    }
+
+    .card h3{
+      font-family:'Playfair Display',serif;
+      font-size:28px;
+      margin-bottom:16px;
+    }
+
+    .card p{
+      color:#b5b5b5;
+      line-height:1.8;
+      font-size:15px;
+    }
+
+    .report-box{
+      margin-top:50px;
+      background:#101010;
+      border:1px solid var(--line);
+      padding:50px;
+    }
+
+    .report-meta{
+      display:flex;
+      gap:20px;
+      flex-wrap:wrap;
+      margin-bottom:22px;
+    }
+
+    .report-meta div{
+      color:#9a9a9a;
+      font-family:'IBM Plex Mono',monospace;
+      font-size:12px;
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+    }
+
+    .report-title{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(34px,5vw,60px);
+      line-height:1.1;
+      margin-bottom:24px;
+      max-width:900px;
+    }
+
+    .report-title span{
+      color:var(--red);
+      font-style:italic;
+    }
+
+    .report-summary{
+      color:#c4c4c4;
+      line-height:1.9;
+      max-width:800px;
+      margin-bottom:36px;
+      font-size:17px;
+    }
+
+    .signal{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:12px 18px;
+      background:rgba(211,47,47,0.08);
+      border:1px solid rgba(211,47,47,0.25);
+      font-family:'IBM Plex Mono',monospace;
+      text-transform:uppercase;
+      letter-spacing:0.12em;
+      font-size:12px;
+      color:#ffb5b5;
+    }
+
+    footer{
+      padding:80px 8%;
+      border-top:1px solid var(--line);
+    }
+
+    .footer-title{
+      font-family:'Playfair Display',serif;
+      font-size:42px;
+      margin-bottom:18px;
+    }
+
+    .footer-text{
+      color:#b3b3b3;
+      line-height:1.9;
+      max-width:700px;
+    }
+
+    .footer-meta{
+      margin-top:40px;
+      color:#6d6d6d;
+      font-family:'IBM Plex Mono',monospace;
+      font-size:12px;
+      line-height:2;
+    }
+
+    @media(max-width:850px){
+
+      nav{
+        display:none;
+      }
+
+      h1{
+        line-height:1.02;
+      }
+
+      .hero p{
+        font-size:18px;
+      }
+
+      .report-box{
+        padding:34px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="logo">
+    <div class="dot"></div>
+    <span>Bharat Signal</span>
+  </div>
+
+  <nav>
+    <a href="#mission">Mission</a>
+    <a href="#framework">Framework</a>
+    <a href="#reports">Reports</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero">
+
+  <div>
+    <div class="eyebrow">
+      Independent Systems Analysis for India
+    </div>
+
+    <h1>
+      The Signal<br>
+      Beneath the <span>Noise.</span>
+    </h1>
+
+    <p>
+      Bharat Signal is an independent early-warning and systems-analysis initiative focused on identifying hidden structural risks behind India’s most consequential long-term decisions.
+    </p>
+
+    <div class="buttons">
+      <a href="#reports" class="btn">Read Report 001</a>
+      <a href="#framework" class="btn secondary">View Framework</a>
+    </div>
+  </div>
+
+</section>
+
+<section id="mission">
+
+  <div class="section-kicker">Mission</div>
+
+  <div class="section-title">
+    Studying the structural risks hidden beneath national ambition.
+  </div>
+
+  <div class="section-desc">
+    Bharat Signal exists to stress-test India’s long-term strategic decisions across infrastructure, technology, energy, governance, and systems resilience — before failure becomes irreversible.
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-tag">Systems Analysis</div>
+      <h3>Second-Order Thinking</h3>
+      <p>
+        Every major national decision creates hidden dependencies, delayed consequences, and systemic vulnerabilities. Bharat Signal studies those chains before they become visible publicly.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-tag">Independent</div>
+      <h3>No Institutional Alignment</h3>
+      <p>
+        Bharat Signal operates independently — without political, governmental, or corporate alignment — enabling long-term analysis without incentive distortion.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-tag">Early Warning</div>
+      <h3>Signals Before Consequences</h3>
+      <p>
+        Systems rarely fail suddenly. They weaken quietly first. Bharat Signal identifies those early structural signals before consequences become irreversible.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+<section id="framework">
+
+  <div class="section-kicker">Framework</div>
+
+  <div class="section-title">
+    The Bharat Signal methodology.
+  </div>
+
+  <div class="section-desc">
+    Each report studies national-scale decisions across multiple time horizons, interconnected systems, and compound failure scenarios.
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-tag">Time Horizons</div>
+      <h3>3 / 10 / 30 Years</h3>
+      <p>
+        Immediate execution risks are separated from long-term structural consequences to identify what compounds silently over time.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-tag">Systems Mapping</div>
+      <h3>Interconnected Analysis</h3>
+      <p>
+        Economic, ecological, technological, geopolitical, and institutional systems are studied together rather than in isolation.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-tag">Failure Modes</div>
+      <h3>Compound Stress Testing</h3>
+      <p>
+        Bharat Signal focuses not only on what breaks first — but what breaks silently, what compounds, and what becomes irreversible.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+<section id="reports">
+
+  <div class="section-kicker">Reports</div>
+
+  <div class="section-title">
+    Report 001
+  </div>
+
+  <div class="report-box">
+
+    <div class="report-meta">
+      <div>Report 001</div>
+      <div>May 2026</div>
+      <div>Public — Independent</div>
+    </div>
+
+    <div class="report-title">
+      The Chip That Could Break:<br>
+      <span>Five Structural Failure Points</span><br>
+      India Hasn't Talked About
+    </div>
+
+    <div class="report-summary">
+      A systems-level stress test of India’s semiconductor mission examining geopolitical dependency, EDA chokepoints, water-risk concentration, institutional capability gaps, and the hidden vulnerabilities beneath India’s chip ambitions.
+    </div>
+
+    <div class="signal">
+      ● Signal Status — Critical Warning
+    </div>
+
+    <div style="margin-top:40px; display:flex; gap:18px; flex-wrap:wrap;">
+      <a href="#" class="btn">Open Report</a>
+      <a href="#" class="btn secondary">Download PDF</a>
+    </div>
+
+  </div>
+
+</section>
+
+<footer id="contact">
+
+  <div class="section-kicker">Bharat Signal</div>
+
+  <div class="footer-title">
+    Independent analysis for long-term national decisions.
+  </div>
+
+  <div class="footer-text">
+    Bharat Signal studies the structural risks hidden beneath India’s future infrastructure, technology, energy, and strategic systems.
+  </div>
+
+  <div class="footer-meta">
+    Founded & Architected by Raj Shekhar Sharma<br>
+    Independent Early-Warning & Systems Analysis Initiative<br>
+    Signals Before Consequences.
+  </div>
+
+</footer>
+
+</body>
+</html>
