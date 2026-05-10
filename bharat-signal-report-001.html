@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bharat Signal — Report 001</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --paper: #f5f0e8;
+    --signal-red: #c0392b;
+    --signal-amber: #d35400;
+    --signal-green: #1a6b3a;
+    --signal-black: #1a1a1a;
+    --rule: #2a2a2a;
+    --muted: #5a5a5a;
+    --accent-line: #c0392b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── COVER PAGE ── */
+  .cover {
+    min-height: 100vh;
+    background: var(--ink);
+    color: var(--paper);
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    padding: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover-noise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .cover-stripe {
+    height: 6px;
+    background: var(--signal-red);
+    position: relative;
+    z-index: 2;
+  }
+
+  .cover-body {
+    padding: 80px 100px;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .cover-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: #888;
+    text-transform: uppercase;
+    margin-bottom: 60px;
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .cover-meta span { color: var(--signal-red); margin-right: 8px; }
+
+  .cover-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    color: var(--signal-red);
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(42px, 6vw, 80px);
+    font-weight: 900;
+    line-height: 1.05;
+    color: var(--paper);
+    margin-bottom: 12px;
+    max-width: 900px;
+  }
+
+  .cover-title em {
+    font-style: italic;
+    color: #ccc;
+  }
+
+  .cover-subtitle {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    color: #999;
+    margin-top: 20px;
+    max-width: 640px;
+    line-height: 1.5;
+  }
+
+  .cover-divider {
+    width: 80px;
+    height: 2px;
+    background: var(--signal-red);
+    margin: 40px 0;
+  }
+
+  .cover-signal-index {
+    display: flex;
+    gap: 60px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+  }
+
+  .signal-badge {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .signal-badge-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: #666;
+    text-transform: uppercase;
+  }
+
+  .signal-badge-status {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--signal-red);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s infinite;
+  }
+
+  .status-dot.red { background: var(--signal-red); }
+  .status-dot.amber { background: #e67e22; }
+  .status-dot.green { background: #27ae60; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .cover-footer {
+    padding: 40px 100px;
+    border-top: 1px solid #222;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .cover-footer-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    color: #555;
+  }
+
+  .cover-footer-brand strong {
+    color: var(--paper);
+    font-weight: 500;
+  }
+
+  .cover-footer-notice {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #444;
+    letter-spacing: 0.1em;
+    max-width: 400px;
+    text-align: right;
+  }
+
+  /* ── BODY LAYOUT ── */
+  .report-body {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 100px 60px;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section {
+    margin-bottom: 80px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-number {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--signal-red);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 4vw, 40px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .section-title em { font-style: italic; color: var(--signal-red); }
+
+  .lead {
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.75;
+    color: #1a1a1a;
+    margin-bottom: 28px;
+    font-family: 'Playfair Display', serif;
+  }
+
+  p {
+    font-size: 16px;
+    line-height: 1.85;
+    color: #2a2a2a;
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  /* ── PULL QUOTES ── */
+  .pull-quote {
+    border-left: 4px solid var(--signal-red);
+    padding: 24px 36px;
+    margin: 40px 0;
+    background: rgba(192, 57, 43, 0.04);
+  }
+
+  .pull-quote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* ── FAILURE MODE CARDS ── */
+  .failure-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 40px 0;
+  }
+
+  @media (max-width: 680px) {
+    .failure-grid { grid-template-columns: 1fr; }
+    .cover-body { padding: 60px 36px; }
+    .cover-footer { padding: 30px 36px; }
+    .report-body { padding: 60px 24px; }
+  }
+
+  .failure-card {
+    border: 1px solid #ddd;
+    padding: 28px;
+    position: relative;
+    background: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .failure-card:hover {
+    border-color: var(--signal-red);
+    box-shadow: 4px 4px 0 var(--signal-red);
+  }
+
+  .failure-card-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--signal-red);
+    margin-bottom: 12px;
+  }
+
+  .failure-card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+
+  .failure-card p {
+    font-size: 14px;
+    color: #555;
+    margin: 0;
+    line-height: 1.65;
+  }
+
+  .severity-bar {
+    height: 3px;
+    margin-top: 16px;
+    background: #eee;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .severity-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--signal-red);
+    transition: width 1s ease;
+  }
+
+  .severity-fill.amber { background: #e67e22; }
+  .severity-fill.critical { background: var(--signal-red); }
+
+  /* ── TIME HORIZON TABLE ── */
+  .horizon-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 40px 0;
+    font-size: 14px;
+  }
+
+  .horizon-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 14px 16px;
+    text-align: left;
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 400;
+  }
+
+  .horizon-table td {
+    padding: 16px;
+    border-bottom: 1px solid #e0ddd5;
+    vertical-align: top;
+    color: #2a2a2a;
+    line-height: 1.6;
+  }
+
+  .horizon-table tr:last-child td { border-bottom: 2px solid var(--ink); }
+
+  .horizon-table td:first-child {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--signal-red);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .horizon-table tr:nth-child(even) td { background: rgba(0,0,0,0.015); }
+
+  /* ── BLIND SPOT BOX ── */
+  .blind-spot {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 48px 52px;
+    margin: 60px 0;
+    position: relative;
+  }
+
+  .blind-spot::before {
+    content: 'THE BLIND SPOT';
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--signal-red);
+    position: absolute;
+    top: 24px;
+    left: 52px;
+  }
+
+  .blind-spot-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 24px;
+    margin-bottom: 20px;
+    line-height: 1.3;
+    color: var(--paper);
+  }
+
+  .blind-spot p {
+    color: #ccc;
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .blind-spot p:last-child { margin-bottom: 0; }
+
+  /* ── SIGNAL MATRIX ── */
+  .signal-matrix {
+    margin: 40px 0;
+    border: 2px solid var(--ink);
+  }
+
+  .signal-matrix-header {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 16px 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+  }
+
+  .signal-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 3fr;
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+  }
+
+  .signal-row:last-child { border-bottom: none; }
+
+  .signal-row-name {
+    padding: 18px 24px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    border-right: 1px solid #ddd;
+  }
+
+  .signal-row-status {
+    padding: 18px 16px;
+    text-align: center;
+    border-right: 1px solid #ddd;
+  }
+
+  .status-pill {
+    display: inline-block;
+    padding: 4px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  .pill-red { background: #fde8e6; color: var(--signal-red); border: 1px solid var(--signal-red); }
+  .pill-amber { background: #fdf3e6; color: var(--signal-amber); border: 1px solid var(--signal-amber); }
+  .pill-green { background: #e6f4ed; color: var(--signal-green); border: 1px solid var(--signal-green); }
+
+  .signal-row-note {
+    padding: 18px 24px;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  /* ── CALL TO ACTION / CLOSING ── */
+  .closing {
+    background: var(--paper);
+    border-top: 4px solid var(--ink);
+    padding: 64px 60px;
+    text-align: center;
+  }
+
+  .closing-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--signal-red);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .closing-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 20px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .closing p {
+    font-size: 15px;
+    color: #555;
+    max-width: 520px;
+    margin: 0 auto 30px;
+  }
+
+  .closing-sig {
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid #ccc;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: #888;
+  }
+
+  /* ── FOOTNOTES ── */
+  .footnote-section {
+    border-top: 1px solid #ccc;
+    padding: 48px 60px;
+    background: #efebe0;
+  }
+
+  .footnote-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 20px;
+  }
+
+  .footnote-item {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 8px;
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .footnote-item::before {
+    content: attr(data-n);
+    position: absolute;
+    left: 0;
+    color: var(--signal-red);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── UTILITIES ── */
+  .rule {
+    border: none;
+    border-top: 1px solid #ccc;
+    margin: 48px 0;
+  }
+
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .highlight {
+    background: rgba(192, 57, 43, 0.08);
+    padding: 2px 6px;
+  }
+
+  .stat-row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    margin: 36px 0;
+  }
+
+  .stat-block {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .stat-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 40px;
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .stat-unit {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--signal-red);
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: #777;
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 36px 0 14px;
+    color: var(--ink);
+  }
+
+  h4 {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 28px 0 10px;
+    color: var(--muted);
+  }
+
+  ul.report-list {
+    padding-left: 0;
+    list-style: none;
+    margin: 16px 0 24px;
+  }
+
+  ul.report-list li {
+    padding: 10px 0 10px 28px;
+    position: relative;
+    border-bottom: 1px solid #e8e4da;
+    font-size: 15px;
+    color: #2a2a2a;
+    line-height: 1.6;
+  }
+
+  ul.report-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--signal-red);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  ul.report-list li:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ COVER ═══════════════════════════════════ -->
+<div class="cover">
+  <div class="cover-noise"></div>
+  <div class="cover-stripe"></div>
+
+  <div class="cover-body">
+    <div class="cover-meta">
+      <div><span>Initiative</span>Bharat Signal</div>
+      <div><span>Report</span>001 / Series I</div>
+      <div><span>Published</span>May 2026</div>
+      <div><span>Classification</span>Public — Independent</div>
+    </div>
+
+    <div class="cover-eyebrow">India's National Decision Stress-Test</div>
+
+    <h1 class="cover-title">
+      The Chip That Could Break:<br>
+      <em>Five Structural Failure Points</em><br>
+      India Hasn't Talked About
+    </h1>
+
+    <div class="cover-subtitle">
+      A rigorous stress-test of India's Semiconductor Mission — across time horizons, systems, and failure modes — examining what the official narrative is missing.
+    </div>
+
+    <div class="cover-divider"></div>
+
+    <div class="cover-signal-index">
+      <div class="signal-badge">
+        <div class="signal-badge-label">Overall Signal Status</div>
+        <div class="signal-badge-status">
+          <span class="status-dot red"></span> Critical Warning
+        </div>
+      </div>
+      <div class="signal-badge">
+        <div class="signal-badge-label">Failure Points Identified</div>
+        <div class="signal-badge-status">5</div>
+      </div>
+      <div class="signal-badge">
+        <div class="signal-badge-label">Reversibility Window</div>
+        <div class="signal-badge-status">3–5 Years</div>
+      </div>
+      <div class="signal-badge">
+        <div class="signal-badge-label">Strategic Bet at Risk</div>
+        <div class="signal-badge-status">₹1.6 Lakh Cr</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div class="cover-footer-brand">
+      <strong>BHARAT SIGNAL</strong> — Independent Early Warning System for India's National Decisions
+    </div>
+    <div class="cover-footer-notice">
+      This report is independently produced. No institutional funding, no government affiliation, no advertiser. The analysis is the author's own.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ BODY ════════════════════════════════════ -->
+<div class="report-body">
+
+  <!-- SECTION 0: PREMISE -->
+  <div class="section">
+    <div class="section-number">§ 00 — Premise</div>
+    <h2 class="section-title">Why This Report Exists</h2>
+
+    <p class="lead">India is making one of the largest sovereign bets in its history. ₹1.6 lakh crore committed. A national mission. A Prime Minister personally inaugurating facilities. A target to produce chips for 70–75% of domestic needs by 2029.</p>
+
+    <p>The narrative is coherent, the momentum is real, and the ambition is legitimate. But momentum is not the same as resilience. Ambition is not the same as stress-tested strategy. And no independent, rigorous public analysis has yet asked the question that every high-stakes decision demands:</p>
+
+    <div class="pull-quote">
+      <p>"What are the specific, structural ways this can fail — and are we looking at them honestly?"</p>
+    </div>
+
+    <p>This report does not argue that India's semiconductor mission will fail. It argues that five structural failure points have not been publicly examined with the seriousness they deserve — and that each one, left unaddressed, has the potential to undermine the entire stack.</p>
+
+    <p>The Bharat Signal Framework stress-tests decisions across three axes: <strong>time horizons</strong> (3-year / 10-year / 30-year), <strong>systems</strong> (economic, geopolitical, ecological, institutional), and <strong>failure modes</strong> (what breaks first, what breaks silently, what becomes irreversible). What follows is that analysis applied to India's semiconductor strategy.</p>
+  </div>
+
+  <hr class="rule">
+
+  <!-- SECTION 1: THE BET -->
+  <div class="section">
+    <div class="section-number">§ 01 — The Size of the Bet</div>
+    <h2 class="section-title">What India Has <em>Actually</em> Committed</h2>
+
+    <p class="lead">Before stress-testing a strategy, you must understand exactly what is at stake. The numbers here are larger — and more fragile — than the official narrative suggests.</p>
+
+    <div class="stat-row">
+      <div class="stat-block">
+        <div class="stat-number">₹1.6<span class="stat-unit">L Cr</span></div>
+        <div class="stat-label">Total investment committed across 10 approved semiconductor projects as of March 2026</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">50<span class="stat-unit">%</span></div>
+        <div class="stat-label">Government subsidy coverage on eligible fabrication projects — meaning the state absorbs half the downside risk</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">1<span class="stat-unit"> fab</span></div>
+        <div class="stat-label">Number of silicon fabrication plants currently operational, against a target ecosystem of dozens</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-number">90<span class="stat-unit">%</span></div>
+        <div class="stat-label">India's current dependence on semiconductor imports — the baseline this mission must overcome</div>
+      </div>
+    </div>
+
+    <p>India's semiconductor market was valued at approximately $45 billion in 2025, with a government target of $100–110 billion by 2030. To sustain that trajectory, India must achieve growth rates in semiconductor manufacturing that <em>few countries have ever managed from a standing start</em>. The historical record — Malaysia, Thailand, and others — is instructive and sobering.</p>
+
+    <p>The current approved portfolio includes two fabrication plants and eight assembly, testing, marking and packaging (ATMP/OSAT) facilities. The concentration in ATMP is itself a strategic vulnerability this report examines. The first commercially-made Indian chip — the Vikram 32-bit processor — was unveiled at SEMICON India 2025. A genuine milestone. But a 32-bit processor represents technology from the early 1990s by global standards. The distance between where India is and where the global frontier is cannot be papered over with ceremony.</p>
+
+    <p>This is not cynicism. It is calibration. The stress-test begins here.</p>
+  </div>
+
+  <hr class="rule">
+
+  <!-- SECTION 2: FAILURE MODES -->
+  <div class="section">
+    <div class="section-number">§ 02 — The Five Failure Points</div>
+    <h2 class="section-title">What the <em>Mission Documents</em> Don't Stress-Test</h2>
+
+    <p class="lead">The following five structural failure points are not predictions of doom. They are the specific pressure points where India's semiconductor strategy is most vulnerable to cascade failure — and where current policy shows the least rigorous contingency thinking.</p>
+
+    <div class="failure-grid">
+
+      <div class="failure-card">
+        <div class="failure-card-tag">Failure Mode 01 · Structural</div>
+        <div class="failure-card-title">The ATMP Trap: Assembly Without Sovereignty</div>
+        <p>India's approved projects are overwhelmingly concentrated in assembly, testing, marking and packaging — the lowest-value, most commoditized segment of the semiconductor value chain. This creates the illusion of a semiconductor industry while the actual intellectual property, design capability, and economic leverage remain entirely abroad. If global chip designers move to cheaper ATMP destinations (Vietnam, Malaysia, Mexico), India's entire investment thesis collapses without having built a single indigenous design capability.</p>
+        <div class="severity-bar"><div class="severity-fill critical" style="width:90%"></div></div>
+      </div>
+
+      <div class="failure-card">
+        <div class="failure-card-tag">Failure Mode 02 · Dependency</div>
+        <div class="failure-card-title">The EDA Chokepoint: Software India Cannot Build Fast Enough</div>
+        <p>Every chip India designs — from startup to government lab — currently runs on Electronic Design Automation software from three US companies: Cadence, Synopsys, and Siemens. Together they control approximately 70% of the global EDA market. A US export restriction on EDA tools — already discussed in Washington policy circles regarding China — would not merely slow India's chip design industry. It would stop it entirely, overnight. India has no credible indigenous EDA development timeline that closes this gap within a decade.</p>
+        <div class="severity-bar"><div class="severity-fill critical" style="width:95%"></div></div>
+      </div>
+
+      <div class="failure-card">
+        <div class="failure-card-tag">Failure Mode 03 · Geopolitical</div>
+        <div class="failure-card-title">The Chinese Engineer Exodus: A Warning Already Triggered</div>
+        <p>By July 2025, more than 300 Chinese engineers had left Foxconn's iPhone factories in India as part of a deliberate Chinese strategy to limit technology transfer to emerging competitors. This is not a random labor market event — it is a precedent. India's semiconductor ambitions depend on technology transfer from Taiwan, the US, and Japan. Each of these partnerships comes with competitive constraints, political conditions, and withdrawal risk that India's official strategy treats as fixed rather than fragile.</p>
+        <div class="severity-bar"><div class="severity-fill amber" style="width:75%"></div></div>
+      </div>
+
+      <div class="failure-card">
+        <div class="failure-card-tag">Failure Mode 04 · Ecological</div>
+        <div class="failure-card-title">The Water Equation: Fabs Need What Gujarat May Not Have</div>
+        <p>Semiconductor fabrication is among the most water-intensive industrial processes on earth. A single advanced fab can consume 10–15 million liters of ultra-pure water per day. India's primary semiconductor cluster is in Sanand, Gujarat — a region already under water stress. Gujarat's policy offers "discounted water tariffs" as an incentive. This is precisely backwards: it subsidizes the destruction of a resource that the fabs themselves require to survive. No public analysis has modeled what sustained semiconductor manufacturing does to Gujarat's water table over a 20-year horizon.</p>
+        <div class="severity-bar"><div class="severity-fill critical" style="width:85%"></div></div>
+      </div>
+
+      <div class="failure-card">
+        <div class="failure-card-tag">Failure Mode 05 · Institutional</div>
+        <div class="failure-card-title">The Talent Pipeline Illusion: Numbers vs. Capability</div>
+        <p>India has over one million engineers skilled in software and AI. This is real. But semiconductor fabrication engineering — the discipline of actually building physical chips — is a completely different knowledge domain from software. The number of Indians specifically trained in semiconductor process engineering, materials science, and cleanroom operations is a small fraction of what the mission's scale requires. The C2S programme and DLI schemes are first-generation efforts that will not produce sufficient specialized talent before the Dholera fab requires it.</p>
+        <div class="severity-bar"><div class="severity-fill amber" style="width:70%"></div></div>
+      </div>
+
+      <div class="failure-card" style="border-color: var(--ink); background: #fafaf7;">
+        <div class="failure-card-tag" style="color: var(--ink);">Compounding Risk</div>
+        <div class="failure-card-title">The Cascade: When Two Failures Meet</div>
+        <p>The most dangerous scenario is not any single failure mode but their intersection. If EDA restrictions coincide with a water crisis in Gujarat's fab cluster, while the ATMP sector is being undercut by cheaper competitors in Southeast Asia — India faces three simultaneous pressures on a strategy with no clear fallback position. The mission documents do not model compound failure. This is the most significant gap in current strategic planning.</p>
+        <div class="severity-bar"><div class="severity-fill critical" style="width:100%"></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- SECTION 3: TIME HORIZONS -->
+  <div class="section">
+    <div class="section-number">§ 03 — Time Horizon Analysis</div>
+    <h2 class="section-title">How the Risk <em>Compounds</em> Over Time</h2>
+
+    <p>The Bharat Signal Framework maps each strategic decision across three time horizons to separate what is visible from what is structural.</p>
+
+    <table class="horizon-table">
+      <thead>
+        <tr>
+          <th>Horizon</th>
+          <th>Window</th>
+          <th>What We're Watching</th>
+          <th>Key Risk</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Near-Term</td>
+          <td>2026–2029</td>
+          <td>Can Tata's Dholera fab achieve commercial-scale production? Does Micron's ATMP facility deliver projected yield? Do the 50 targeted fabless startups under ISM 2.0 reach tape-out?</td>
+          <td>Execution slippage. India has no buffer — the political narrative has set expectations that cannot accommodate delay without damaging investor confidence.</td>
+        </tr>
+        <tr>
+          <td>Mid-Term</td>
+          <td>2029–2036</td>
+          <td>Does India reach 3nm/2nm capability as targeted by ISM 2.0? Can India build a genuinely indigenous EDA capability? Does the ATMP sector face commoditization pressure from Southeast Asian competitors?</td>
+          <td>Technological stagnation at legacy nodes. India risks building world-class 28nm capacity precisely when the global market moves on — mirroring the trap China is trying to escape.</td>
+        </tr>
+        <tr>
+          <td>Long-Term</td>
+          <td>2036–2055</td>
+          <td>Is India's chip design IP owned by Indians or by global primes? Does semiconductor manufacturing concentration in Gujarat survive climate-driven water stress? Has India produced a generation of genuine semiconductor scientists, or process operators?</td>
+          <td>Sovereignty without self-sufficiency. India may host fabs while the intellectual property, the process knowledge, and the economic surplus all flow outward. This is the historical pattern for every late entrant to manufacturing.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="rule">
+
+  <!-- SECTION 4: THE BLIND SPOT -->
+  <div class="blind-spot">
+    <div class="blind-spot-title">The One Thing No One Is Saying Publicly</div>
+    <p>India's semiconductor strategy is, at its structural core, a geopolitical hedge strategy that has been packaged as an industrial policy. The actual goal — unstated but operationally real — is to give the US, Japan, and the Quad a credible alternative to Taiwan's TSMC concentration risk. India is not building a semiconductor industry for India. It is building a semiconductor insurance policy for the West.</p>
+    <p>This is not inherently wrong. But it carries a profound implication that current policy refuses to name: <strong>India's leverage in this arrangement is temporary and declining.</strong> The moment India's fabs are operational and the West's supply chain anxiety is reduced, India's negotiating position on technology transfer, on advanced node access, on IP ownership — weakens. The window to extract maximum concessions from global partners in exchange for geographic diversification is <em>right now</em>. India is not using it with sufficient strategic aggression.</p>
+    <p>Every month that passes without India demanding binding technology transfer agreements — not just investment commitments — as the price of its semiconductor real estate, is a month India leaves irreversible value on the table.</p>
+  </div>
+
+  <!-- SECTION 5: SIGNAL MATRIX -->
+  <div class="section">
+    <div class="section-number">§ 05 — Signal Matrix</div>
+    <h2 class="section-title">India's Semiconductor Bets: <em>Current Status</em></h2>
+
+    <div class="signal-matrix">
+      <div class="signal-matrix-header">Bharat Signal — Semiconductor Sector Assessment · May 2026</div>
+
+      <div class="signal-row">
+        <div class="signal-row-name">ATMP / OSAT Buildout (Gujarat cluster)</div>
+        <div class="signal-row-status"><span class="status-pill pill-amber">Caution</span></div>
+        <div class="signal-row-note">Operational. CG Semi, Micron, Kaynes Semicon producing. Risk: commoditization and value-chain ceiling.</div>
+      </div>
+
+      <div class="signal-row">
+        <div class="signal-row-name">Dholera Silicon Fab (Tata + PSMC)</div>
+        <div class="signal-row-status"><span class="status-pill pill-amber">Caution</span></div>
+        <div class="signal-row-note">SEZ notified April 2026. Construction underway. Target node: 28nm. Risk: timeline slippage, node obsolescence on arrival.</div>
+      </div>
+
+      <div class="signal-row">
+        <div class="signal-row-name">EDA Tool Sovereignty</div>
+        <div class="signal-row-status"><span class="status-pill pill-red">Warning</span></div>
+        <div class="signal-row-note">100% dependent on US EDA (Cadence, Synopsys, Siemens). No credible indigenous alternative in development. Single-point failure risk.</div>
+      </div>
+
+      <div class="signal-row">
+        <div class="signal-row-name">Semiconductor Talent Pipeline</div>
+        <div class="signal-row-status"><span class="status-pill pill-red">Warning</span></div>
+        <div class="signal-row-note">C2S programme active; 278 institutions, 72 startups. But fabrication-specific talent (process engineers, materials scientists) remains critically scarce.</div>
+      </div>
+
+      <div class="signal-row">
+        <div class="signal-row-name">Water Infrastructure for Fabs</div>
+        <div class="signal-row-status"><span class="status-pill pill-red">Warning</span></div>
+        <div class="signal-row-note">No public modelling of fab-cluster water demand against Gujarat groundwater capacity over 20-year horizon. Discounted tariff policy may accelerate depletion.</div>
+      </div>
+
+      <div class="signal-row">
+        <div class="signal-row-name">Indigenous Chip Design IP</div>
+        <div class="signal-row-status"><span class="status-pill pill-amber">Caution</span></div>
+        <div class="signal-row-note">Vikram processor milestone achieved. DLI funding 23 design projects. Gap: scale and commercial viability of indigenous IP remain unproven.</div>
+      </div>
+
+      <div class="signal-row">
+        <div class="signal-row-name">Technology Transfer Agreements</div>
+        <div class="signal-row-status"><span class="status-pill pill-red">Warning</span></div>
+        <div class="signal-row-note">No publicly available binding technology transfer terms from PSMC, Micron, or other partners. Investment ≠ knowledge transfer.</div>
+      </div>
+
+      <div class="signal-row">
+        <div class="signal-row-name">Geopolitical Dependency Risk (China)</div>
+        <div class="signal-row-status"><span class="status-pill pill-red">Warning</span></div>
+        <div class="signal-row-note">Chinese engineer withdrawal from Foxconn India already demonstrated willingness to weaponize labor. Rare minerals restriction pattern established.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- SECTION 6: RECOMMENDATIONS -->
+  <div class="section">
+    <div class="section-number">§ 06 — What Would Change the Signal</div>
+    <h2 class="section-title">The <em>Four Actions</em> That Would Move This from Warning to Caution</h2>
+
+    <p class="lead">Bharat Signal does not exist to criticize. It exists to identify exactly what would need to be true for the warning to be downgraded. Here are the four concrete shifts that would substantively de-risk India's semiconductor strategy.</p>
+
+    <h3>1. A National EDA Sovereignty Programme</h3>
+    <p>India should launch — with the urgency of a space mission — an indigenous EDA development programme, potentially housed within IIT Bombay, IISc, and C-DAC as a joint mandate. The target is not to match Cadence in five years. It is to have a credible, functional open-source EDA stack for legacy nodes (180nm–28nm) within three years, which is where India's immediate fabrication capacity lives. This de-risks the single most catastrophic external chokepoint in the entire strategy.</p>
+
+    <h3>2. Mandatory Technology Transfer Covenants</h3>
+    <p>Every future ISM approval — every rupee of the 50% subsidy — should carry a legally binding technology transfer covenant: specific process knowledge, specific node capabilities, specific numbers of Indian engineers trained to a defined competency level. Investment without knowledge transfer is economic rent extraction by the foreign partner. India is paying for a semiconductor industry; it should demand one.</p>
+
+    <h3>3. A Gujarat Fab Water Audit</h3>
+    <p>Commission an independent, public hydrogeological assessment of Gujarat's water table capacity against projected semiconductor cluster demand over a 20-year horizon. Publish the results. Build contingency infrastructure — water recycling mandates, alternative sourcing from the Narmada grid, and demand limits per fab — before the first large-scale fab is operational. The cost of this audit is trivial. The cost of discovering the problem in 2031 is not.</p>
+
+    <h3>4. An ATMP Exit Strategy</h3>
+    <p>Acknowledge formally that ATMP is a transitional play, not a destination. Create explicit policy milestones at which India must have moved up the value chain to design and front-end fabrication. Without a sunset mechanism on ATMP subsidies tied to design capability milestones, India risks locking in a low-value equilibrium that perpetuates dependency rather than resolving it.</p>
+  </div>
+
+</div><!-- end report-body -->
+
+<!-- ═══════════════════════════════════ CLOSING ══════════════════════════════════ -->
+<div class="closing">
+  <div class="closing-eyebrow">Bharat Signal · Report 001 · End</div>
+  <h2 class="closing-title">The Signal Is Clear.<br>The Window Is Open.</h2>
+  <p>India's semiconductor mission is not failing. But it is being built without the stress-testing infrastructure that decisions of this magnitude require. The five failure points identified in this report are all addressable — but only if they are named, mapped, and acted on before they become irreversible.</p>
+  <p>That is what Bharat Signal exists to do. Not to predict catastrophe. To make catastrophe less likely.</p>
+  <div class="closing-sig">
+    BHARAT SIGNAL is an independent early warning system for India's national decisions.<br>
+    Report 002 is in preparation. Topic: India's Power Grid Under EV Adoption Pressure.<br><br>
+    For correspondence, collaboration, or Signal Contributor inquiries — contact the author directly.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ FOOTNOTES ════════════════════════════════ -->
+<div class="footnote-section">
+  <div class="footnote-title">Sources &amp; References</div>
+  <div class="footnote-item" data-n="1.">India Semiconductor Mission (ISM) — official PIB releases, Government of India, 2025–2026.</div>
+  <div class="footnote-item" data-n="2.">Observer Research Foundation — "India's Semiconductor Ambitions and Global Competitiveness: Confronting the China Challenge," ORF Occasional Paper No. 502, October 2025.</div>
+  <div class="footnote-item" data-n="3.">Observer Research Foundation — "The Evolving Semiconductor Supply Chain Landscape: Lessons for India's Semiconductor Mission," ORF Occasional Paper No. 513, December 2025.</div>
+  <div class="footnote-item" data-n="4.">CSIS — "Semiconductor Clusters in the Making: India's Push for Global Competitiveness," February 2026.</div>
+  <div class="footnote-item" data-n="5.">India Briefing / Dezan Shira — Semiconductor Sector Outlook 2025 &amp; 2026 updates.</div>
+  <div class="footnote-item" data-n="6.">PIB — India Semiconductor Mission 2.0 announcement, Union Budget 2026–27.</div>
+  <div class="footnote-item" data-n="7.">TechWire Asia — "Semiconductor India: Commercial chip production starts 2025," September 2025.</div>
+  <div class="footnote-item" data-n="8.">IRM India — "Gujarat to Kashmir: Mapping Risk Landscapes in India's Semiconductor Mission," November 2025.</div>
+  <div class="footnote-item" data-n="9.">NCVET — "India Semiconductor Ecosystem Workforce Development Strategy Report 2025."</div>
+  <div class="footnote-item" data-n="10.">MarkNtel Advisors — India Semiconductor Market 2025–2030 forecast data.</div>
+</div>
+
+</body>
+</html>
