@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bharat Signal — Report 002: The Grid That Cannot Keep Up</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0a;
+    --paper: #f5f0e8;
+    --amber: #b8520a;
+    --amber-dim: #7a3808;
+    --amber-glow: rgba(184,82,10,0.08);
+    --rule: #2a2a2a;
+    --muted: #5a5a5a;
+    --faint: #e8e3da;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── COVER ── */
+  .cover {
+    min-height: 100vh;
+    background: #0d0b08;
+    color: #f0ebe0;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover-noise {
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.045'/%3E%3C/svg%3E");
+    pointer-events: none;
+  }
+
+  /* Amber circuit-line decoration */
+  .cover-circuit {
+    position: absolute;
+    top: 0; right: 0;
+    width: 50%;
+    height: 100%;
+    opacity: 0.07;
+    pointer-events: none;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 59px, #d4690a 59px, #d4690a 60px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, #d4690a 79px, #d4690a 80px);
+  }
+
+  .cover-stripe {
+    height: 5px;
+    background: linear-gradient(90deg, var(--amber) 0%, #e8820a 60%, #d4690a 100%);
+    position: relative;
+    z-index: 2;
+  }
+
+  .cover-body {
+    padding: 80px 100px;
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .cover-series-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: #666;
+    text-transform: uppercase;
+    margin-bottom: 56px;
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .cover-series-meta span { color: var(--amber); margin-right: 8px; }
+
+  .cover-report-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(40px, 5.5vw, 78px);
+    font-weight: 900;
+    line-height: 1.06;
+    color: #f0ebe0;
+    max-width: 920px;
+    margin-bottom: 10px;
+  }
+
+  .cover-title em {
+    font-style: italic;
+    color: #888;
+  }
+
+  .cover-subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    color: #888;
+    margin-top: 22px;
+    max-width: 640px;
+    line-height: 1.55;
+  }
+
+  .cover-rule {
+    width: 72px;
+    height: 2px;
+    background: var(--amber);
+    margin: 36px 0;
+  }
+
+  .cover-signals {
+    display: flex;
+    gap: 56px;
+    flex-wrap: wrap;
+  }
+
+  .csig { display: flex; flex-direction: column; gap: 5px; }
+
+  .csig-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    color: #555;
+    text-transform: uppercase;
+  }
+
+  .csig-val {
+    font-family: 'Playfair Display', serif;
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--amber);
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+
+  .pulse-dot {
+    width: 11px; height: 11px;
+    background: var(--amber);
+    border-radius: 50%;
+    animation: pdot 2.2s ease-in-out infinite;
+  }
+
+  @keyframes pdot { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+  .cover-footer {
+    padding: 36px 100px;
+    border-top: 1px solid #1e1a14;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .cover-footer-brand {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    color: #444;
+  }
+
+  .cover-footer-brand strong { color: #f0ebe0; font-weight: 500; }
+
+  .cover-footer-note {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #333;
+    letter-spacing: 0.1em;
+    text-align: right;
+    max-width: 420px;
+  }
+
+  /* ── BODY ── */
+  .body-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 100px 60px;
+  }
+
+  /* ── SECTIONS ── */
+  .sec { margin-bottom: 80px; }
+
+  .sec-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 11px;
+  }
+
+  .sec-h {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(26px, 3.8vw, 44px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 30px;
+    padding-bottom: 18px;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .sec-h em { font-style: italic; color: var(--amber); }
+
+  .lead-p {
+    font-family: 'Playfair Display', serif;
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 1.8;
+    color: #1a1a1a;
+    margin-bottom: 26px;
+  }
+
+  p {
+    font-size: 15.5px;
+    line-height: 1.9;
+    color: #2e2e2e;
+    margin-bottom: 20px;
+    font-weight: 300;
+  }
+
+  h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 36px 0 12px;
+    color: var(--ink);
+  }
+
+  hr.rule { border: none; border-top: 1px solid #d8d0c4; margin: 52px 0; }
+
+  /* ── PULL QUOTE ── */
+  .pq {
+    border-left: 4px solid var(--amber);
+    padding: 22px 34px;
+    margin: 40px 0;
+    background: var(--amber-glow);
+  }
+
+  .pq p {
+    font-family: 'Playfair Display', serif;
+    font-size: 21px;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  /* ── STAT ROW ── */
+  .stats {
+    display: flex;
+    gap: 36px;
+    flex-wrap: wrap;
+    margin: 36px 0;
+  }
+
+  .stat {
+    flex: 1;
+    min-width: 130px;
+  }
+
+  .stat-n {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .stat-u {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--amber);
+  }
+
+  .stat-l {
+    font-size: 12px;
+    color: #777;
+    margin-top: 5px;
+    line-height: 1.45;
+  }
+
+  /* ── FAILURE CARDS ── */
+  .f-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+    margin: 40px 0;
+  }
+
+  @media(max-width:660px){
+    .f-grid { grid-template-columns: 1fr; }
+    .body-wrap { padding: 60px 22px; }
+    .cover-body { padding: 60px 28px; }
+    .cover-footer { padding: 28px 28px; }
+    .cover-signals { gap: 30px; }
+  }
+
+  .fc {
+    border: 1px solid #ccc;
+    padding: 28px;
+    background: #fff;
+    position: relative;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .fc:hover {
+    border-color: var(--amber);
+    box-shadow: 4px 4px 0 var(--amber);
+  }
+
+  .fc-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 12px;
+  }
+
+  .fc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .fc p {
+    font-size: 13.5px;
+    color: #555;
+    margin: 0;
+    line-height: 1.65;
+  }
+
+  .sev {
+    height: 3px;
+    margin-top: 16px;
+    background: #eee;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .sev-fill {
+    height: 100%;
+    border-radius: 2px;
+  }
+
+  .sev-red    { background: #c0392b; }
+  .sev-amber  { background: var(--amber); }
+
+  /* ── HORIZON TABLE ── */
+  .h-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 40px 0;
+    font-size: 14px;
+  }
+
+  .h-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 13px 15px;
+    text-align: left;
+    background: var(--ink);
+    color: var(--paper);
+    font-weight: 400;
+  }
+
+  .h-table td {
+    padding: 15px 15px;
+    border-bottom: 1px solid #e0ddd5;
+    vertical-align: top;
+    color: #2e2e2e;
+    line-height: 1.6;
+    font-size: 13.5px;
+  }
+
+  .h-table tr:last-child td { border-bottom: 2px solid var(--ink); }
+
+  .h-table td:first-child {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--amber);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .h-table tr:nth-child(even) td { background: rgba(0,0,0,0.013); }
+
+  /* ── BLIND SPOT ── */
+  .blindspot {
+    background: #0d0b08;
+    color: #f0ebe0;
+    padding: 48px 52px;
+    margin: 60px 0;
+    position: relative;
+  }
+
+  .blindspot::before {
+    content: 'THE BLIND SPOT';
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--amber);
+    position: absolute;
+    top: 22px; left: 52px;
+  }
+
+  .bs-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 27px;
+    font-weight: 700;
+    margin-top: 24px;
+    margin-bottom: 18px;
+    line-height: 1.3;
+    color: #f0ebe0;
+  }
+
+  .blindspot p {
+    color: #bbb;
+    font-size: 15px;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+
+  .blindspot p:last-child { margin-bottom: 0; }
+
+  /* ── SIGNAL MATRIX ── */
+  .s-matrix {
+    margin: 40px 0;
+    border: 2px solid var(--ink);
+  }
+
+  .s-matrix-hdr {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 22px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+
+  .s-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 3fr;
+    border-bottom: 1px solid #ddd;
+    align-items: center;
+  }
+
+  .s-row:last-child { border-bottom: none; }
+
+  .s-name {
+    padding: 17px 22px;
+    font-size: 14px;
+    font-weight: 500;
+    border-right: 1px solid #ddd;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .s-status {
+    padding: 17px 14px;
+    text-align: center;
+    border-right: 1px solid #ddd;
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 4px 11px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    border-radius: 2px;
+    font-weight: 500;
+  }
+
+  .p-red    { background: #fde8e6; color: #c0392b; border: 1px solid #c0392b; }
+  .p-amber  { background: #fdf3e6; color: var(--amber); border: 1px solid var(--amber); }
+  .p-green  { background: #e6f4ed; color: #1a6b3a; border: 1px solid #1a6b3a; }
+
+  .s-note {
+    padding: 17px 22px;
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  /* ── LIST ── */
+  ul.rlist {
+    padding-left: 0;
+    list-style: none;
+    margin: 16px 0 24px;
+  }
+
+  ul.rlist li {
+    padding: 10px 0 10px 26px;
+    position: relative;
+    border-bottom: 1px solid #e8e4da;
+    font-size: 15px;
+    color: #2e2e2e;
+    line-height: 1.65;
+  }
+
+  ul.rlist li::before {
+    content: '—';
+    position: absolute; left: 0;
+    color: var(--amber);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  ul.rlist li:last-child { border-bottom: none; }
+
+  /* ── CLOSING ── */
+  .closing {
+    background: var(--paper);
+    border-top: 4px solid var(--ink);
+    padding: 64px 60px;
+    text-align: center;
+  }
+
+  .cl-eye {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .cl-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 18px;
+    max-width: 580px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .closing p {
+    font-size: 15px;
+    color: #555;
+    max-width: 500px;
+    margin: 0 auto 28px;
+  }
+
+  .cl-sig {
+    margin-top: 44px;
+    padding-top: 28px;
+    border-top: 1px solid #ccc;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: #888;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px 26px;
+    border: 1px solid #bbb;
+    margin-top: 28px;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .back-link:hover { border-color: var(--ink); color: var(--ink); }
+
+  /* ── FOOTNOTES ── */
+  .fnotes {
+    border-top: 1px solid #ccc;
+    padding: 44px 60px;
+    background: #ede8dc;
+  }
+
+  .fn-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 18px;
+  }
+
+  .fn {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 7px;
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .fn::before {
+    content: attr(data-n);
+    position: absolute; left: 0;
+    color: var(--amber);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* ── HIGHLIGHT ── */
+  .hl { background: rgba(184,82,10,0.07); padding: 1px 5px; }
+</style>
+</head>
+<body>
+
+<!-- ═══════ COVER ═══════ -->
+<div class="cover">
+  <div class="cover-noise"></div>
+  <div class="cover-circuit"></div>
+  <div class="cover-stripe"></div>
+
+  <div class="cover-body">
+    <div class="cover-series-meta">
+      <div><span>Initiative</span>Bharat Signal</div>
+      <div><span>Report</span>002 / Series I</div>
+      <div><span>Published</span>June 2026</div>
+      <div><span>Follows</span>Report 001 — Semiconductor Strategy</div>
+    </div>
+
+    <div class="cover-report-num">India's National Decision Stress-Test · Report 002</div>
+
+    <h1 class="cover-title">
+      The Grid That Cannot<br>
+      <em>Keep Up:</em><br>
+      India's Power System<br>
+      Under EV Pressure
+    </h1>
+
+    <p class="cover-subtitle">
+      India is accelerating EV adoption while its power distribution system carries ₹7.5 lakh crore in debt, rising AT&C losses, and zero smart-charging standards. This report stress-tests what happens when an unstoppable policy mandate meets an already-broken infrastructure.
+    </p>
+
+    <div class="cover-rule"></div>
+
+    <div class="cover-signals">
+      <div class="csig">
+        <div class="csig-label">Overall Signal Status</div>
+        <div class="csig-val"><span class="pulse-dot"></span> Warning</div>
+      </div>
+      <div class="csig">
+        <div class="csig-label">Failure Points</div>
+        <div class="csig-val">5</div>
+      </div>
+      <div class="csig">
+        <div class="csig-label">DISCOM Debt</div>
+        <div class="csig-val">₹7.5 Lakh Cr</div>
+      </div>
+      <div class="csig">
+        <div class="csig-label">Additional Power Needed (Full EV)</div>
+        <div class="csig-val">900–1,100 TWh</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div class="cover-footer-brand">
+      <strong>BHARAT SIGNAL</strong> — Independent Early Warning System for India's National Decisions
+    </div>
+    <div class="cover-footer-note">
+      Independently produced. No institutional funding, no government affiliation, no advertiser.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ BODY ═══════ -->
+<div class="body-wrap">
+
+  <!-- §00 PREMISE -->
+  <div class="sec">
+    <div class="sec-tag">§ 00 — Premise</div>
+    <h2 class="sec-h">The Collision No One Is<br><em>Modelling Honestly</em></h2>
+
+    <p class="lead-p">India sold 2.45 million electric vehicles in FY2026 — a 24.6% surge in a single year. The government is pushing harder. Oil prices are rising. The FAME scheme is expanding. The political will to electrify transport is, for the first time, genuinely strong.</p>
+
+    <p>Underneath that ambition sits a power distribution system in chronic crisis. State-owned DISCOMs have accumulated over <span class="hl">₹7.5 lakh crore in debt</span> — growing at roughly 7% annually since 2015 — and are borrowing new loans to service older ones. Aggregate Technical and Commercial (AT&C) losses have actually <em>increased</em> to 16.12% in FY2024, reversing years of marginal improvement. In 23 out of India's states and Union Territories, dependence on subsidy reimbursements to cover basic operating expenses has grown worse, not better, since FY2019.</p>
+
+    <p>This is the infrastructure India is asking to absorb one of the largest new demand shocks in its history.</p>
+
+    <div class="pq">
+      <p>"Full transport electrification could require an additional 900–1,100 TWh of electricity annually. India's entire current annual generation is approximately 1,825 TWh. This is not a marginal adjustment. It is a near-doubling of the system."</p>
+    </div>
+
+    <p>The official narrative treats EV adoption and grid modernisation as parallel tracks running in the same direction. This report argues they are currently on a collision course — and that the window to re-align them is narrowing faster than policy is moving.</p>
+  </div>
+
+  <hr class="rule">
+
+  <!-- §01 THE NUMBERS -->
+  <div class="sec">
+    <div class="sec-tag">§ 01 — The Scale of What's Coming</div>
+    <h2 class="sec-h">What the System Must <em>Absorb</em></h2>
+
+    <p class="lead-p">Before stress-testing the failure points, it is necessary to understand the magnitude of what India's grid is being asked to do — numbers that are rarely placed side by side in the same document.</p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-n">2.45<span class="stat-u">M</span></div>
+        <div class="stat-l">EV units sold in FY2026 — a 24.6% year-on-year jump</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">520<span class="stat-u">GW</span></div>
+        <div class="stat-l">India's total installed electricity capacity as of 2026, handling a record peak of 242 GW</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">500<span class="stat-u">TWh</span></div>
+        <div class="stat-l">Additional electricity needed for 50% fleet electrification by 2047 — one-third of current annual generation</div>
+      </div>
+      <div class="stat">
+        <div class="stat-n">₹7.5<span class="stat-u">L Cr</span></div>
+        <div class="stat-l">Total DISCOM debt as of 2025 — the companies responsible for last-mile power delivery to EV chargers</div>
+      </div>
+    </div>
+
+    <p>India's peak electricity load has risen 54% over the past decade — from 162 GW in 2017 to 250 GW in 2024. The IEA projects demand growing at 6.4% annually through 2030, adding over 570 TWh to consumption in five years. Cooling alone will account for more than 20% of that growth, driven by rising AC ownership colliding with worsening summers.</p>
+
+    <p>EV charging adds a qualitatively different kind of demand on top of this: not steady and predictable, but <strong>synchronised and peaky.</strong> When millions of two-wheelers and cars are plugged in across India's cities between 6pm and 10pm — the same window when households turn on lights, fans, ACs, and televisions — the grid faces simultaneous demand spikes it has never been engineered to absorb.</p>
+
+    <p>Resource adequacy projections from the Central Electricity Authority indicate that even <em>without</em> aggressive EV adoption, most Indian states will face significant power shortages by 2034. Unserved energy in 2030 is projected at 38 TWh in Uttar Pradesh alone — 14.9% of demand. The EV transition, if unmanaged, lands directly on top of an already-deteriorating adequacy position.</p>
+  </div>
+
+  <hr class="rule">
+
+  <!-- §02 FIVE FAILURE POINTS -->
+  <div class="sec">
+    <div class="sec-tag">§ 02 — The Five Failure Points</div>
+    <h2 class="sec-h">Where the System <em>Breaks</em> First</h2>
+
+    <p class="lead-p">Five structural failure points sit between India's EV ambitions and the grid that must power them. Each is addressable. None is being addressed at the required pace.</p>
+
+    <div class="f-grid">
+
+      <div class="fc">
+        <div class="fc-tag">Failure Mode 01 · Financial</div>
+        <div class="fc-title">DISCOMs Cannot Fund the Upgrade They Must Deliver</div>
+        <p>India's distribution companies must invest in transformer upgrades, feeder separation, smart metering, and EV-aware load management — while simultaneously servicing ₹7.5 lakh crore in existing debt on which interest expenses alone consume 5% of annual revenues. DISCOMs in 23 states are borrowing not to invest but to cover operational costs. A system that cannot sustain itself today is being asked to capitalise an entirely new demand category tomorrow. The math does not close.</p>
+        <div class="sev"><div class="sev-fill sev-red" style="width:92%"></div></div>
+      </div>
+
+      <div class="fc">
+        <div class="fc-tag">Failure Mode 02 · Temporal</div>
+        <div class="fc-title">The Evening Peak Problem: No Smart Charging Mandate Exists</div>
+        <p>Evening residential EV charging — the natural behaviour of commuters returning home — overlaps precisely with India's peak grid load window. Simultaneous charging across even a fraction of India's 420 million registered vehicles could add hundreds of gigawatts of near-simultaneous demand. India currently has no national smart-charging standards. No time-of-use tariffs that meaningfully incentivise off-peak charging at scale. BESS tenders surged from 24 GWh in 2024 to 60 GWh in 2025, yet actual deployed storage remains at approximately 0.5 GWh. The gap between tender and deployment is the gap between policy and reality.</p>
+        <div class="sev"><div class="sev-fill sev-red" style="width:88%"></div></div>
+      </div>
+
+      <div class="fc">
+        <div class="fc-tag">Failure Mode 03 · Structural</div>
+        <div class="fc-title">Freight Electrification: The Invisible Demand Bomb</div>
+        <p>Public attention focuses on electric scooters and cars. The grid stress will come from freight. India's 6.26 million Heavy Goods Vehicles, if electrified, could require 450–565 TWh annually — roughly the electricity consumption of the entire country's residential sector today. Freight depots, cold chains, and logistics hubs will require dedicated high-capacity charging infrastructure that bears no resemblance to the EV charger paradigm being planned. No public freight electrification grid impact study exists. The policy gap here is total.</p>
+        <div class="sev"><div class="sev-fill sev-red" style="width:85%"></div></div>
+      </div>
+
+      <div class="fc">
+        <div class="fc-tag">Failure Mode 04 · Coal Paradox</div>
+        <div class="fc-title">Clean Mobility Powered by Dirty Generation</div>
+        <p>India's grid is coal-led. As of 2026, coal remains the backbone of firm, dispatchable generation. An EV transition that outpaces renewable buildout does not reduce India's carbon footprint — it transfers oil dependence to coal dependence, while adding grid stress. BESS deployment (0.5 GWh actual vs 60 GWh tendered) means India cannot store solar surplus to serve evening EV demand. Without a coordinated renewable + storage + EV planning framework, India risks building a clean-looking mobility system on a dirty, strained foundation — and finding out when the grid fails, not before.</p>
+        <div class="sev"><div class="sev-fill sev-amber" style="width:74%"></div></div>
+      </div>
+
+      <div class="fc">
+        <div class="fc-tag">Failure Mode 05 · Political Economy</div>
+        <div class="fc-title">Tariff Politics: The Root Cause Nobody Fixes</div>
+        <p>The root of the DISCOM crisis is not inefficiency — it is political. Tariffs are kept below cost-recovery levels to protect agricultural and domestic consumers. State governments delay subsidy reimbursements, creating cash flow crises. Tariff subsidies accounted for 21% of DISCOM revenues in FY2025, up from 17% in FY2021. Every attempted reform — UDAY, RDSS — has deferred this structural problem rather than resolving it. Adding EV charging load to a system running on political subsidies rather than cost-reflective tariffs accelerates the debt spiral without reforming its cause.</p>
+        <div class="sev"><div class="sev-fill sev-red" style="width:95%"></div></div>
+      </div>
+
+      <div class="fc" style="border-color: var(--ink); background: #fafaf7;">
+        <div class="fc-tag" style="color:var(--ink);">Cascade Risk</div>
+        <div class="fc-title">The Compound Scenario: When Three Failures Arrive Together</div>
+        <p>The most dangerous scenario is not a single failure but their overlap. If evening peak stress triggers grid instability in a state where the DISCOM is already technically insolvent and unable to invest in demand response — simultaneously with a coal supply disruption (as already seen in early 2026) — India faces cascading outages in the same urban corridors where EV adoption is highest. This is not speculative. The preconditions for this scenario exist today, in Uttar Pradesh, Tamil Nadu, and Telangana simultaneously.</p>
+        <div class="sev"><div class="sev-fill sev-red" style="width:100%"></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- §03 TIME HORIZONS -->
+  <div class="sec">
+    <div class="sec-tag">§ 03 — Time Horizon Analysis</div>
+    <h2 class="sec-h">How the Risk <em>Evolves</em></h2>
+
+    <table class="h-table">
+      <thead>
+        <tr>
+          <th>Horizon</th>
+          <th>Window</th>
+          <th>What We're Watching</th>
+          <th>Key Risk</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Near-Term</td>
+          <td>2026–2029</td>
+          <td>Does BESS deployment close the gap with tendered capacity? Do smart charging standards get mandated nationally? Can DISCOM finances stabilise under RDSS reforms? Does freight electrification policy emerge?</td>
+          <td>Reactive policy. The evening peak problem materialises as isolated urban outages before national standards are enacted. Government responds after failures rather than before them.</td>
+        </tr>
+        <tr>
+          <td>Mid-Term</td>
+          <td>2029–2036</td>
+          <td>Is India's renewable + storage buildout coordinated with EV adoption curves? Have DISCOMs achieved cost-reflective tariffs or received structural restructuring? Does freight corridor grid planning exist?</td>
+          <td>Locked-in infrastructure mismatch. Charging networks built without grid-awareness force expensive retrofitting. States with weakest DISCOMs — UP, Telangana, Jharkhand — become EV adoption deserts, worsening regional inequality.</td>
+        </tr>
+        <tr>
+          <td>Long-Term</td>
+          <td>2036–2050</td>
+          <td>Has India avoided replacing oil import dependence with coal dependence in its transport sector? Is the DISCOM model structurally reformed or repeatedly bailed out? Does India's EV ambition produce energy sovereignty or a new form of vulnerability?</td>
+          <td>The sovereignty trap. If battery minerals remain import-dependent and grid generation remains coal-dominant, India achieves EV adoption statistics while failing the underlying strategic objectives of the transition: energy security, emissions reduction, and fiscal resilience.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="rule">
+
+  <!-- §04 BLIND SPOT -->
+  <div class="blindspot">
+    <div class="bs-title">The One Thing No One Is Saying Publicly</div>
+    <p>India's EV policy and India's power sector reform are being run as two separate ministries with two separate mandates, two separate budget lines, and almost no structural coordination mechanism between them. The Ministry of Heavy Industries drives EV adoption. The Ministry of Power manages grid reform. Neither ministry's five-year plan is built around the other's trajectory.</p>
+    <p>This is not bureaucratic inefficiency. It is a governance architecture failure. The EV transition is, at its core, an energy transition — and it cannot be managed as a vehicle manufacturing policy while its grid consequences are handled separately as a power sector problem. Every month that these two tracks operate in silos is a month that grid investment decisions are being made without EV load forecasts, and EV adoption targets are being set without grid readiness conditions.</p>
+    <p><strong>The single most high-leverage intervention available to India right now is not a technology investment. It is a governance intervention: a mandatory joint planning framework between MoHI and MoP, with a unified 2030 grid-EV model that neither ministry currently possesses.</strong> No FAME scheme, no RDSS scheme, no BESS tender programme will compensate for the absence of this coordination. India is building two ends of a bridge from opposite sides, with different measuring tapes.</p>
+  </div>
+
+  <!-- §05 SIGNAL MATRIX -->
+  <div class="sec">
+    <div class="sec-tag">§ 05 — Signal Matrix</div>
+    <h2 class="sec-h">India's Grid-EV System: <em>Current Status</em></h2>
+
+    <div class="s-matrix">
+      <div class="s-matrix-hdr">Bharat Signal — Power Grid / EV Sector Assessment · June 2026</div>
+
+      <div class="s-row">
+        <div class="s-name">DISCOM Financial Health</div>
+        <div class="s-status"><span class="pill p-red">Warning</span></div>
+        <div class="s-note">₹7.5L Cr debt, AT&C losses rising to 16.12% in FY24. Borrowing to service borrowing. RDSS reforms insufficient to close structural gap.</div>
+      </div>
+
+      <div class="s-row">
+        <div class="s-name">National Smart Charging Standards</div>
+        <div class="s-status"><span class="pill p-red">Warning</span></div>
+        <div class="s-note">Draft NEP 2026 acknowledges need. No mandatory national standards enacted. Evening peak stress unmanaged at scale.</div>
+      </div>
+
+      <div class="s-row">
+        <div class="s-name">Battery Energy Storage Deployment</div>
+        <div class="s-status"><span class="pill p-red">Warning</span></div>
+        <div class="s-note">60 GWh tendered in 2025. ~0.5 GWh actually deployed. Execution gap is the single biggest grid-readiness failure point.</div>
+      </div>
+
+      <div class="s-row">
+        <div class="s-name">EV Retail Adoption</div>
+        <div class="s-status"><span class="pill p-green">On Track</span></div>
+        <div class="s-note">2.45M units FY2026, +24.6% YoY. Two-wheelers leading. Momentum strong. Policy accelerants (FAME, state subsidies) working.</div>
+      </div>
+
+      <div class="s-row">
+        <div class="s-name">Freight Electrification Planning</div>
+        <div class="s-status"><span class="pill p-red">Warning</span></div>
+        <div class="s-note">No public freight corridor grid impact study. No dedicated HGV charging infrastructure policy. Largest future demand source, least planned.</div>
+      </div>
+
+      <div class="s-row">
+        <div class="s-name">MoHI–MoP Joint Planning</div>
+        <div class="s-status"><span class="pill p-red">Warning</span></div>
+        <div class="s-note">No unified grid-EV planning framework exists. Two ministries operating independent roadmaps. The governance gap behind every other gap.</div>
+      </div>
+
+      <div class="s-row">
+        <div class="s-name">Renewable Energy Buildout</div>
+        <div class="s-status"><span class="pill p-amber">Caution</span></div>
+        <div class="s-note">Over 100 GW solar installed. Non-fossil fuel now &gt;50% of capacity. But generation share and storage integration lag capacity additions.</div>
+      </div>
+
+      <div class="s-row">
+        <div class="s-name">Cost-Reflective Tariff Reform</div>
+        <div class="s-status"><span class="pill p-red">Warning</span></div>
+        <div class="s-note">Political economy prevents resolution. Subsidy share of DISCOM revenue rising. Root cause of DISCOM insolvency remains structurally unaddressed.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="rule">
+
+  <!-- §06 RECOMMENDATIONS -->
+  <div class="sec">
+    <div class="sec-tag">§ 06 — What Would Change the Signal</div>
+    <h2 class="sec-h">Four Actions That Move This<br><em>from Warning to Caution</em></h2>
+
+    <p class="lead-p">The warning is not permanent. Each of the following interventions is technically and politically feasible within the current planning cycle — if prioritised with appropriate urgency.</p>
+
+    <h3>1. A Unified Grid-EV Command Framework</h3>
+    <p>Establish a statutory joint planning body between the Ministry of Heavy Industries and the Ministry of Power with a mandate to produce a single, unified 2030 Grid-EV Model: integrated EV adoption curves with grid demand forecasts, by state, by season, and by time-of-day. This body should produce a public report annually. Its projections should be binding inputs into DISCOM investment planning and FAME scheme design. This is a governance change, not a technology investment — and it is the precondition that makes every other intervention coherent.</p>
+
+    <h3>2. A National Smart Charging Mandate with Time-of-Use Architecture</h3>
+    <p>Mandate smart-charging readiness in all new EV chargers deployed under public schemes from 2027 onwards, with a grid-signal response capability. Simultaneously, introduce nationally standardised time-of-use tariffs that make off-peak and solar-hour charging materially cheaper — 40% or more — than evening peak charging. The technology exists. The economics are favourable. Only the political will to set the tariff structure is missing.</p>
+
+    <h3>3. An Emergency BESS Deployment Programme</h3>
+    <p>The gap between 60 GWh tendered and 0.5 GWh deployed is not a supply problem — it is a procurement, financing, and land acquisition execution failure. Treat BESS deployment with the same urgency that was applied to the solar capacity buildout: a dedicated central project management authority, viability gap funding for the first 10 GWh, and a 24-month commissioning target for projects already tendered. Storage is not optional infrastructure for a grid absorbing intermittent renewables and synchronised EV peaks. It is the grid's shock absorber.</p>
+
+    <h3>4. A Freight Grid Impact Assessment — Before the Trucks Arrive</h3>
+    <p>Commission an urgent, public national freight electrification grid impact study: where are India's major freight corridors, what is the charging demand profile of HGV electrification at 10% / 30% / 60% penetration, which transmission nodes are most at risk, and what infrastructure must be built before commercial freight electrification becomes viable. This study does not exist. It should exist before policy accelerants for commercial EV adoption are deployed — not after the demand materialises on an unprepared grid.</p>
+  </div>
+
+</div><!-- /body-wrap -->
+
+<!-- ═══════ CLOSING ═══════ -->
+<div class="closing">
+  <div class="cl-eye">Bharat Signal · Report 002 · End</div>
+  <h2 class="cl-title">The EV Revolution Is Real.<br>The Grid Is Not Ready for It.</h2>
+  <p>India's electric vehicle transition is not the problem. The problem is that the infrastructure it depends on is deteriorating, the governance framework that must coordinate it does not exist, and the financial system that must fund it is already insolvent. These are fixable problems — but only if they are named before they compound.</p>
+  <p>That is what Bharat Signal exists to do. Report after report, decision after decision, before it is too late.</p>
+  <a href="index.html" class="back-link">← Return to Bharat Signal</a>
+  <div class="cl-sig">
+    BHARAT SIGNAL — Report 002 · Published June 2026<br>
+    Report 003 is in preparation. Topic: India's AI Governance Gap — Building Power Without Rules.<br><br>
+    For correspondence, collaboration, or Signal Contributor inquiries — contact the author directly.
+  </div>
+</div>
+
+<!-- ═══════ FOOTNOTES ═══════ -->
+<div class="fnotes">
+  <div class="fn-title">Sources &amp; References</div>
+  <div class="fn" data-n="1.">IEEFA — "Fossil Fuel Disruptions Strengthen India's Case for Boosting Renewable Energy Investments," April 2026.</div>
+  <div class="fn" data-n="2.">Ember — "Indian States' Electricity Transition (SET) 2026," April 2026.</div>
+  <div class="fn" data-n="3.">Norton Rose Fulbright — "Key Takeaways for India from the IEA's Electricity 2026 Report," March 2026.</div>
+  <div class="fn" data-n="4.">Chahal Academy / The Hindu Editorial Analysis — "India's EV Ambition Needs a Grid Strategy to Match," May 2026.</div>
+  <div class="fn" data-n="5.">Zerodha Daily Brief — "India's State DISCOMs Are at the Cusp of a Big Change," December 2025.</div>
+  <div class="fn" data-n="6.">PRS India — "What Is Fuelling Power Sector Losses?" March 2026.</div>
+  <div class="fn" data-n="7.">Power Line Magazine — "Reform Track: DISCOMs Make Progress, But Challenges Remain," October 2025.</div>
+  <div class="fn" data-n="8.">CDFA Research Foundation — "India's Energy Sector in 2025: A System Under Pressure, Not Progress," November 2025.</div>
+  <div class="fn" data-n="9.">IISD — "Mapping India's Energy Policy 2026," April 2026.</div>
+  <div class="fn" data-n="10.">ICRA Power Sector — Q2 2025 report, discom debt and AT&C loss data.</div>
+  <div class="fn" data-n="11.">NextIAS / Akka IAS — EV Transition Grid Analysis, May 2026. (900–1,100 TWh and freight demand figures.)</div>
+  <div class="fn" data-n="12.">Power Peak Digest — "Electricity 2026: India's Demand Surge, Grid Strain, and Shifting Power Mix," February 2026.</div>
+  <div class="fn" data-n="13.">Bolt.earth — "Understanding India's National Electricity Policy 2026 and Its Impact on EV Charging," May 2026.</div>
+  <div class="fn" data-n="14.">Federal Synergies — "Indian Power Sector Demand in 2026 and Projections up to 2030."</div>
+</div>
+
+</body>
+</html>
